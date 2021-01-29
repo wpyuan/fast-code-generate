@@ -1,0 +1,34 @@
+# freeMark config
+spring:
+  freemarker:
+    # 是否允许HttpServletRequest属性覆盖(隐藏)控制器生成的同名模型属性。
+    allow-request-override: false
+    cache: true
+    check-template-location: true
+    expose-request-attributes: false
+    expose-session-attributes: false
+    expose-spring-macro-helpers: false
+    template-loader-path: classpath:/template/
+    suffix: .ftl
+    content-type: text/html
+    charset: UTF-8
+    enabled: true
+    # 是否优先从文件系统加载template，以支持热加载，默认为true
+    prefer-file-system-access: true
+
+  datasource:
+    mysql:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/train
+      username: root
+      password: root
+    oracle:
+      jdbc-url: jdbc:oracle:thin:@localhost:1521/helowin
+      username: test
+      password: test
+      driver-class-name: oracle.jdbc.OracleDriver
+      connectionTestQuery: SELECT 1 from dual
+
+logging:
+  level:
+    com.github.wpyuan.generate: debug
