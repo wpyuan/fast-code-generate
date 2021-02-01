@@ -1,8 +1,6 @@
 package com.github.wpyuan.generate;
 
 import com.github.wpyuan.generate.cache.Cache;
-import com.github.wpyuan.generate.domain.entity.UserInfo;
-import com.github.wpyuan.generate.infra.mapper.UserInfoMapper;
 import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
@@ -16,8 +14,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @SpringBootTest
 @TestPropertySource(properties = {"spring.config.location=classpath:application.yml"})
