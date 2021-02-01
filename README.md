@@ -1,5 +1,5 @@
 # fast-code-generate
-快速代码生成器，目前仅支持mysql、oracle数据源
+快速代码生成器，目前仅支持mysql、oracle数据源，生成的代码需搭配[mybatis-crud](https://wpyuan.github.io/mybatis-crud-source/)使用
 
 ## 使用说明
 两种方式使用
