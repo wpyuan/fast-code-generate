@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.wpyuan.generate.mapper.oracle.EntityInfoOraMapper">
 
-    <select id="selectTableInfo" resultType="java.util.Map">
+    <select id="selectTableInfo" resultType="com.github.wpyuan.generate.dto.TableInfo">
         SELECT
             a.TABLE_NAME "tableName",
             b.COMMENTS "tableDesc",
