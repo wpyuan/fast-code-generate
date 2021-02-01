@@ -1,4 +1,4 @@
-package com.github.wpyuan.generate.mapper.mysql;
+package com.github.wpyuan.generate.mapper.oracle;
 
 import com.github.wpyuan.generate.mapper.DefaultEntityInfoMapper;
 
@@ -8,6 +8,5 @@ import java.util.Map;
 /**
  * @author PeiYuan
  */
-public interface EntityInfoMapper extends DefaultEntityInfoMapper {
-
+public interface EntityInfoOraMapper extends DefaultEntityInfoMapper {
 }

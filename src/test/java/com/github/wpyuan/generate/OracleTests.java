@@ -1,9 +1,8 @@
 package com.github.wpyuan.generate;
 
 import com.github.wpyuan.generate.cache.Cache;
-import com.github.wpyuan.generate.domain.entity.UserInfo;
-import com.github.wpyuan.generate.infra.mapper.UserInfoMapper;
-import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
+import com.github.wpyuan.generate.config.DBContextHolder;
+import com.github.wpyuan.generate.mapper.oracle.EntityInfoOraMapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
@@ -15,21 +14,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
+import javax.sql.DataSource;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootTest
 @TestPropertySource(properties = {"spring.config.location=classpath:application.yml"})
 @Slf4j
-public class MysqlTests {
+public class OracleTests {
 
     private Configuration cfg;
 
     private String outPath;
 
     @Autowired
-    private EntityInfoMapper entityInfoMapper;
+    private EntityInfoOraMapper entityInfoOraMapper;
 
     @BeforeEach
     public void before() throws IOException {
@@ -39,15 +40,16 @@ public class MysqlTests {
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setClassicCompatible(true);
-
+        DBContextHolder.oracle();
         outPath = "E:\\repo\\fast-code-generate\\src\\test\\out";
     }
 
     @Test
-    public void entity() throws IOException, TemplateException {
+    public void entity() throws IOException, TemplateException, SQLException {
         // 1、查询当前数据库所有表
-        String schemaName = entityInfoMapper.selectCurrentSchemaName();
-        Cache.TABLE_INFO = entityInfoMapper.selectTableInfo(schemaName);
+        String schemaName = entityInfoOraMapper.selectCurrentSchemaName();
+        log.debug("{}", schemaName);
+        Cache.TABLE_INFO = entityInfoOraMapper.selectTableInfo(schemaName);
 
         log.debug("{}", Cache.TABLE_INFO);
 

@@ -3,6 +3,7 @@ package com.github.wpyuan.generate.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.wpyuan.generate.cache.Cache;
+import com.github.wpyuan.generate.dto.TableInfo;
 import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,10 @@ import java.util.Map;
 @Service
 public class TableDetailService {
 
-    @Autowired
-    private EntityInfoMapper entityInfoMapper;
-
     public String getTableDesc(String tableName) {
-        for (Map<String, Object> map : Cache.TABLE_INFO) {
-            if (tableName.equals(map.get("tableName"))) {
-                return (String) map.get("tableDesc");
+        for (TableInfo tableInfo : Cache.TABLE_INFO) {
+            if (tableName.equals(tableInfo.getTableName())) {
+                return tableInfo.getTableDesc();
             }
         }
         return null;

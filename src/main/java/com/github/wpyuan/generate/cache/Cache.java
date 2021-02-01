@@ -1,9 +1,9 @@
 package com.github.wpyuan.generate.cache;
 
+import com.github.wpyuan.generate.dto.TableInfo;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 缓存信息
@@ -14,5 +14,5 @@ public class Cache {
     /**
      * 表信息
      */
-    public static List<Map<String, Object>> TABLE_INFO = new ArrayList<>();
+    public static List<TableInfo> TABLE_INFO = new ArrayList<>();
 }

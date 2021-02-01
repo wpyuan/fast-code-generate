@@ -1,6 +1,7 @@
 package com.github.wpyuan.generate.service;
 
 import com.github.wpyuan.generate.cache.Cache;
+import com.github.wpyuan.generate.dto.TableInfo;
 import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
 import com.github.wpyuan.generate.util.GenerateUtil;
 import com.google.common.base.CaseFormat;
@@ -24,8 +25,6 @@ import java.util.*;
 public class GenerateService {
 
     @Autowired
-    private EntityInfoMapper entityInfoMapper;
-    @Autowired
     private Configuration freeMarkerConfiguration;
     @Autowired
     private TableDetailService tableDetailService;
@@ -36,25 +35,24 @@ public class GenerateService {
         Map<String, Object> field = null;
         List<Map<String, Object>> resultMap = new ArrayList<>();
         Map<String, Object> result = null;
-        for (Map<String, Object> map : Cache.TABLE_INFO) {
-            if (!tableName.equals(map.get("tableName"))) {
+        for (TableInfo tableInfo : Cache.TABLE_INFO) {
+            if (!tableName.equals(tableInfo.getTableName())) {
                 continue;
             }
-            fieldTypeImports.add((String) map.get("javaType"));
+            fieldTypeImports.add(tableInfo.getJavaType());
             field = new HashMap<>(4);
-            field.put("desc", map.get("columnDesc"));
-            boolean isPk = ((Long) map.get("isPk")).equals(1L) ? true : false;
-            field.put("isId", isPk);
-            field.put("type", (String) map.get("javaType"));
-            field.put("name", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, ((String) map.get("columnName")).toLowerCase()));
+            field.put("desc", tableInfo.getColumnDesc());
+            field.put("isId", tableInfo.getIsPk());
+            field.put("type", tableInfo.getJavaType());
+            field.put("name", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableInfo.getColumnName().toLowerCase()));
             fields.add(field);
-
+            
             //mapper.xml
             result = new HashMap<>(4);
-            result.put("column", map.get("columnName"));
-            result.put("jdbcType", jdbcType((String) map.get("columnType")));
-            result.put("property", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, ((String) map.get("columnName")).toLowerCase()));
-            result.put("isId", isPk);
+            result.put("column", tableInfo.getColumnName());
+            result.put("jdbcType", jdbcType(tableInfo.getColumnType()));
+            result.put("property", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableInfo.getColumnName().toLowerCase()));
+            result.put("isId", tableInfo.getIsPk());
             resultMap.add(result);
         }
 
@@ -107,6 +105,7 @@ public class GenerateService {
     }
 
     private String jdbcType(String columnType) {
+        //TODO
         if (columnType.contains("bigint")) {
             return "BIGINT";
         } else if (columnType.contains("varchar") || columnType.contains("text")) {

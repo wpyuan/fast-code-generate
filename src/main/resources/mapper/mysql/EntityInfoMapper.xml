@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper">
 
-    <select id="selectTableInfo" resultType="java.util.Map">
+    <select id="selectTableInfo" resultType="com.github.wpyuan.generate.dto.TableInfo">
         select a.table_name                          tableName,
                b.table_comment                       tableDesc,
                a.column_name                         columnName,
@@ -50,10 +50,10 @@
                 select table_name from information_schema.tables where table_schema = #{schemaName}
             )
               and constraint_name = 'primary'
-        ) c on a.table_name = c.table_name;
+        ) c on a.table_name = c.table_name
     </select>
 
     <select id="selectCurrentSchemaName" resultType="java.lang.String">
-        select database();
+        select database()
     </select>
 </mapper>
