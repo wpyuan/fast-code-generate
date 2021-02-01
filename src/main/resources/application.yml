@@ -19,13 +19,13 @@ spring:
   datasource:
     mysql:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      jdbc-url: jdbc:mysql://localhost:3306/train
-      username: root
-      password: root
+      jdbc-url: jdbc:mysql://${MYSQL-IP:localhost}:${MYSQL-PORT:3306}/${MYSQL-DB:train}
+      username: ${MYSQL-USERNAME:root}
+      password: ${MYSQL-PASSWORD:root}
     oracle:
-      jdbc-url: jdbc:oracle:thin:@localhost:1521/helowin
-      username: test
-      password: test
+      jdbc-url: jdbc:oracle:thin:@${ORACLE-IP:localhost}:${ORACLE-PORT:1521}/${ORACLE-SID:helowin}
+      username: ${ORACLE-USERNAME:test}
+      password: ${ORACLE-PASSWORD:test}
       driver-class-name: oracle.jdbc.OracleDriver
       connectionTestQuery: SELECT 1 from dual
 
