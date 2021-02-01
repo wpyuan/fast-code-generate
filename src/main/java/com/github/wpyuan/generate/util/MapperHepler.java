@@ -18,7 +18,6 @@ public class MapperHepler {
     private EntityInfoOraMapper entityInfoOraMapper;
 
     public DefaultEntityInfoMapper getEntityInfoMapper() {
-        DBContextHolder.mysql();
         if ("oracle".equals(DBContextHolder.get())) {
             return entityInfoOraMapper;
         }
