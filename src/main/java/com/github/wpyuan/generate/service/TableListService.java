@@ -3,7 +3,7 @@ package com.github.wpyuan.generate.service;
 import com.github.wpyuan.generate.cache.Cache;
 import com.github.wpyuan.generate.dto.TableInfo;
 import com.github.wpyuan.generate.mapper.DefaultEntityInfoMapper;
-import com.github.wpyuan.generate.util.MapperHepler;
+import com.github.wpyuan.generate.helper.MapperHepler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import java.util.*;
  * @author PeiYuan
  */
 @Service
-public class IndexService {
+public class TableListService {
     @Autowired
     private MapperHepler mapperHepler;
     private DefaultEntityInfoMapper entityInfoMapper;

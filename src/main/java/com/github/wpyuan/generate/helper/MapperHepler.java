@@ -1,4 +1,4 @@
-package com.github.wpyuan.generate.util;
+package com.github.wpyuan.generate.helper;
 
 import com.github.wpyuan.generate.config.DBContextHolder;
 import com.github.wpyuan.generate.mapper.DefaultEntityInfoMapper;

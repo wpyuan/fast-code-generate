@@ -33,7 +33,9 @@ public class ${entityClassName} {
     /**
       * ${item.desc!}
       */
-    <#if item.isId == true>
+    <#if item.sequenceName??>
+    @Id(sequence = "${item.sequenceName}")
+    <#elseIf item.isId == true>
     @Id
     </#if>
     private ${item.type} ${item.name};

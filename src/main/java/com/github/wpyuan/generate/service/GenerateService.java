@@ -1,9 +1,13 @@
 package com.github.wpyuan.generate.service;
 
 import com.github.wpyuan.generate.cache.Cache;
+import com.github.wpyuan.generate.config.DBContextHolder;
+import com.github.wpyuan.generate.convert.IJdbcTypeConvert;
 import com.github.wpyuan.generate.dto.TableInfo;
-import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
+import com.github.wpyuan.generate.mapper.oracle.SequenceMapper;
 import com.github.wpyuan.generate.util.GenerateUtil;
+import com.github.wpyuan.generate.convert.MysqlJdbcTypeConvert;
+import com.github.wpyuan.generate.convert.OracleJdbcTypeConvert;
 import com.google.common.base.CaseFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -13,7 +17,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -28,6 +31,8 @@ public class GenerateService {
     private Configuration freeMarkerConfiguration;
     @Autowired
     private TableDetailService tableDetailService;
+    @Autowired
+    private SequenceMapper sequenceMapper;
 
     public void generate(String tableName, String outPath, String packageName, String author, String entityPackage, String mapperPackage, String mapperXmlPath) {
         Set<String> fieldTypeImports = new HashSet<>();
@@ -39,8 +44,15 @@ public class GenerateService {
             if (!tableName.equals(tableInfo.getTableName())) {
                 continue;
             }
-            fieldTypeImports.add(tableInfo.getJavaType());
             field = new HashMap<>(4);
+            if (tableInfo.getIsPk() && "oracle".equals(DBContextHolder.get())) {
+                // 查询序列，默认格式是：表名_主键名_S
+                String sequenceName = tableName + "_" + tableInfo.getColumnName() + "_S";
+                if (sequenceMapper.isSequenceExist(sequenceName)) {
+                    field.put("sequenceName", sequenceName);
+                }
+            }
+            fieldTypeImports.add(tableInfo.getJavaType());
             field.put("desc", tableInfo.getColumnDesc());
             field.put("isId", tableInfo.getIsPk());
             field.put("type", tableInfo.getJavaType());
@@ -105,19 +117,13 @@ public class GenerateService {
     }
 
     private String jdbcType(String columnType) {
-        //TODO
-        if (columnType.contains("bigint")) {
-            return "BIGINT";
-        } else if (columnType.contains("varchar") || columnType.contains("text")) {
-            return "VARCHAR";
-        } else if (columnType.contains("decimal")) {
-            return "DECIMAL";
-        } else if (columnType.contains("tinyint(1)")) {
-            return "BOOLEAN";
-        } else if (columnType.contains("date")) {
-            return "TIMESTAMP";
+        IJdbcTypeConvert jdbcTypeConvert = null;
+        if ("oracle".equals(DBContextHolder.get())) {
+            jdbcTypeConvert = new OracleJdbcTypeConvert();
         } else {
-            return "VARCHAR";
+            jdbcTypeConvert = new MysqlJdbcTypeConvert();
         }
+
+        return jdbcTypeConvert.convert(columnType);
     }
 }
