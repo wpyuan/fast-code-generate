@@ -4,9 +4,9 @@
 ## 使用说明
 两种方式使用
 
-第一种，手动拉起源码，自行运行项目，访问http://localhost:8080使用
+第一种，手动拉起源码，改写`application.yml`配置文件数据源部分配置，自行运行项目，访问http://localhost:8080使用
 
-第二种，下载对应版本的可执行`jar`包，执行如下命令启动`jar`包，访问http://localhost:8080使用
+第二种，[下载对应版本的可执行`jar`包](https://github.com/wpyuan/fast-code-generate/releases)，执行如下命令启动`jar`包，访问http://localhost:8080使用
 
 以下为linux环境使用举例
 ```shell
