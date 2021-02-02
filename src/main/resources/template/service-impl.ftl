@@ -2,6 +2,7 @@ package ${servicePackage}.impl;
 
 import com.github.defaultcore.service.impl.DefaultServiceImpl;
 import ${entityPackage}.${entityClassName};
+import ${servicePackage}.${entityClassName}Service;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @date ${date}
  */
 @Service
-public class ${entityClassName}ServiceImpl extends DefaultServiceImpl<${entityClassName}, ${entityClassName}> {
+public class ${entityClassName}ServiceImpl extends DefaultServiceImpl<${entityClassName}, ${entityClassName}> implements ${entityClassName}Service {
 }
