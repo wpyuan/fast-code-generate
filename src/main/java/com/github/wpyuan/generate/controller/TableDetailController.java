@@ -2,6 +2,7 @@ package com.github.wpyuan.generate.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.wpyuan.generate.dto.GenerateInfo;
 import com.github.wpyuan.generate.service.TableDetailService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +34,17 @@ public class TableDetailController {
         model.addAttribute("entityPackage", cache.get("entityPackage"));
         model.addAttribute("mapperPackage", cache.get("mapperPackage"));
         model.addAttribute("mapperXmlPath", cache.get("mapperXmlPath"));
+        model.addAttribute("isGenerateOther", cache.get("isGenerateOther"));
+        model.addAttribute("servicePackage", cache.get("servicePackage"));
+        model.addAttribute("controllerPackage", cache.get("controllerPackage"));
         model.addAttribute("tableDesc", tableDesc);
         model.addAttribute("tableName", tableName);
         return "table_detail";
     }
 
     @RequestMapping("/table-detail/cache")
-    public ResponseEntity<String> cache(String outPath, String packageName, String author, String entityPackage, String mapperPackage, String mapperXmlPath) throws IOException {
-        tableDetailService.writeCache(outPath, packageName, author, entityPackage, mapperPackage, mapperXmlPath);
+    public ResponseEntity<String> cache(GenerateInfo generateInfo) throws IOException {
+        tableDetailService.writeCache(generateInfo);
         return ResponseEntity.ok("缓存成功");
     }
 }

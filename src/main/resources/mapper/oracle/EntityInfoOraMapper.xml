@@ -31,6 +31,7 @@
         WHERE
                 a.table_name IN
                 (select table_name from user_tables where TABLESPACE_NAME is not null and user = #{schemaName})
+        order by a.TABLE_NAME, a.COLUMN_ID
     </select>
     <select id="selectCurrentSchemaName" resultType="java.lang.String">
         select user from dual

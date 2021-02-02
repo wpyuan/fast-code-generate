@@ -3,6 +3,7 @@ package com.github.wpyuan.generate.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.wpyuan.generate.cache.Cache;
+import com.github.wpyuan.generate.dto.GenerateInfo;
 import com.github.wpyuan.generate.dto.TableInfo;
 import com.github.wpyuan.generate.mapper.mysql.EntityInfoMapper;
 import org.apache.commons.io.FileUtils;
@@ -29,15 +30,8 @@ public class TableDetailService {
         return null;
     }
 
-    public void writeCache(String outPath, String packageName, String author, String entityPackage, String mapperPackage, String mapperXmlPath) throws IOException {
+    public void writeCache(GenerateInfo generateInfo) throws IOException {
         File cache = ResourceUtils.getFile("classpath:cache/table_detail_cache.json");
-        JSONObject jsonObject = JSON.parseObject(FileUtils.readFileToString(cache));
-        jsonObject.put("outPath", outPath);
-        jsonObject.put("packageName", packageName);
-        jsonObject.put("author", author);
-        jsonObject.put("entityPackage", entityPackage);
-        jsonObject.put("mapperPackage", mapperPackage);
-        jsonObject.put("mapperXmlPath", mapperXmlPath);
-        FileUtils.writeStringToFile(cache, JSON.toJSONString(jsonObject));
+        FileUtils.writeStringToFile(cache, JSON.toJSONString(generateInfo));
     }
 }

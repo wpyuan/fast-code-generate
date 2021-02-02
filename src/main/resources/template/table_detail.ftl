@@ -77,6 +77,40 @@
                             <input id="author" name="author" type="text" value="${author!''}" placeholder="如wpyuan" required />
                             <a href="#" class="ui-icon-close" onclick="$('#author').val('')"></a>
                         </div>
+                        <div class="ui-form-item ui-form-item-switch ui-border-b">
+                            <p>生成service/controller代码</p>
+                            <label class="ui-switch">
+                                <input id="isGenerateOther" name="isGenerateOther" type="checkbox" onchange="isGenerateOther()"/>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="other" class="demo-item" hidden>
+                <p class="demo-desc">service/controller相关</p>
+                <div class="demo-block">
+                    <div class="ui-form ui-border-t">
+                        <div class="ui-form-item ui-border-b">
+                            <label>
+                                service所在次级路径，默认impl在该目录下
+                            </label>
+                            <input id="servicePackage" name="servicePackage" type="text" value="${servicePackage!''}" placeholder="如app.service" required />
+                            <a href="#" class="ui-icon-close" onclick="$('#servicePackage').val('')"></a>
+                        </div>
+                        <div class="ui-form-item ui-border-b">
+                            <label>
+                                controller所在次级路径
+                            </label>
+                            <input id="controllerPackage" name="controllerPackage" type="text" value="${controllerPackage!''}" placeholder="如api.controller" required />
+                            <a href="#" class="ui-icon-close" onclick="$('#controllerPackage').val('')"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-item">
+                <div class="demo-block">
+                    <div class="ui-form ui-border-t">
                         <div class="ui-btn-wrap">
                             <button class="ui-btn-lg ui-btn-primary" onclick="submit()">
                                 生成文件
@@ -119,6 +153,11 @@
 <script src="/js/lib/zepto.min.js"></script>
 <script src="/js/index.js"></script>
 <script>
+    <#if isGenerateOther>
+        $("#isGenerateOther").prop("checked", true);
+        isGenerateOther();
+    </#if>
+
     function refresh() {
         $.ajax({
             url: "/refresh",
@@ -187,7 +226,8 @@
     function getFrom() {
         var outPath = $("#outPath").val().replaceAll("\\","/");
         return "outPath=" + outPath + "&packageName=" + $("#packageName").val() + "&author=" + $("#author").val() +
-            "&entityPackage=" + $("#entityPackage").val() + "&mapperPackage=" + $("#mapperPackage").val() + "&mapperXmlPath=" + $("#mapperXmlPath").val();
+            "&entityPackage=" + $("#entityPackage").val() + "&mapperPackage=" + $("#mapperPackage").val() + "&mapperXmlPath=" + $("#mapperXmlPath").val() +
+            "&isGenerateOther=" + $("#isGenerateOther").is(":checked") + "&servicePackage=" + $("#servicePackage").val() + "&controllerPackage=" + $("#controllerPackage").val();
     }
 
     function handleSuccess(res) {
@@ -216,6 +256,14 @@
         $("#loading").addClass("hidden");
     }
 
+    function isGenerateOther() {
+        var otherShow = $("#isGenerateOther").is(":checked");
+        if (otherShow) {
+            $("#other").show();
+        } else {
+            $("#other").hide();
+        }
+    }
 
 </script>
 </body>

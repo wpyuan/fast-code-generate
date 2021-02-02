@@ -3,11 +3,12 @@ package com.github.wpyuan.generate.service;
 import com.github.wpyuan.generate.cache.Cache;
 import com.github.wpyuan.generate.config.DBContextHolder;
 import com.github.wpyuan.generate.convert.IJdbcTypeConvert;
+import com.github.wpyuan.generate.convert.MysqlJdbcTypeConvert;
+import com.github.wpyuan.generate.convert.OracleJdbcTypeConvert;
+import com.github.wpyuan.generate.dto.GenerateInfo;
 import com.github.wpyuan.generate.dto.TableInfo;
 import com.github.wpyuan.generate.mapper.oracle.SequenceMapper;
 import com.github.wpyuan.generate.util.GenerateUtil;
-import com.github.wpyuan.generate.convert.MysqlJdbcTypeConvert;
-import com.github.wpyuan.generate.convert.OracleJdbcTypeConvert;
 import com.google.common.base.CaseFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -34,7 +35,7 @@ public class GenerateService {
     @Autowired
     private SequenceMapper sequenceMapper;
 
-    public void generate(String tableName, String outPath, String packageName, String author, String entityPackage, String mapperPackage, String mapperXmlPath) {
+    public void generate(String tableName, GenerateInfo generateInfo) {
         Set<String> fieldTypeImports = new HashSet<>();
         List<Map<String, Object>> fields = new ArrayList<>();
         Map<String, Object> field = null;
@@ -71,12 +72,12 @@ public class GenerateService {
 
         // 填充数据
         Map<String, Object> data = new HashMap<>(8);
-        data.put("entityPackage", StringUtils.isNotBlank(entityPackage) ? packageName + "." + entityPackage : packageName);
-        data.put("mapperPackage", StringUtils.isNotBlank(mapperPackage) ? packageName + "." + mapperPackage : packageName);
-        data.put("mapperXmlPath", mapperXmlPath);
+        data.put("entityPackage", StringUtils.isNotBlank(generateInfo.getEntityPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getEntityPackage() : generateInfo.getPackageName());
+        data.put("mapperPackage", StringUtils.isNotBlank(generateInfo.getMapperPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getMapperPackage() : generateInfo.getPackageName());
+        data.put("mapperXmlPath", generateInfo.getMapperXmlPath());
         data.put("fieldTypeImports", fieldTypeImports);
         data.put("tableDesc", tableDetailService.getTableDesc(tableName));
-        data.put("author", author);
+        data.put("author", generateInfo.getAuthor());
         data.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
         data.put("tableName", tableName);
         data.put("entityClassName", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName.toLowerCase()));
@@ -84,12 +85,17 @@ public class GenerateService {
         data.put("resultMap", resultMap);
 
         // 生成entity
-        this.entity(outPath, data);
+        this.entity(generateInfo.getOutPath(), data);
         // 生成 mapper
-        this.mapper(outPath, data);
+        this.mapper(generateInfo.getOutPath(), data);
 
-        // 生成 service
-        // 生成 controller
+        if (generateInfo.getIsGenerateOther()) {
+            data.put("servicePackage", StringUtils.isNotBlank(generateInfo.getServicePackage()) ? generateInfo.getPackageName() + "." + generateInfo.getServicePackage() : generateInfo.getPackageName());
+            data.put("controllerPackage", StringUtils.isNotBlank(generateInfo.getControllerPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getControllerPackage() : generateInfo.getPackageName());
+            // 生成 service
+            this.service(generateInfo.getOutPath(), data);
+            // 生成 controller
+        }
     }
 
     public void entity(String outPath, Map<String, Object> data) {
@@ -106,11 +112,25 @@ public class GenerateService {
         Template temp = null;
         try {
             temp = freeMarkerConfiguration.getTemplate("mapper.ftl");
-            GenerateUtil.writeFile(outPath + "/" + ((String) data.get("mapperPackage")).replaceAll("\\.", "/") +  "/" + data.get("entityClassName") + "Mapper.java", temp, data);
+            GenerateUtil.writeFile(outPath + "/" + ((String) data.get("mapperPackage")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + "Mapper.java", temp, data);
             // 生成 mapper.xml
             String resourcePath = outPath.replaceFirst("java", "resources");
             temp = freeMarkerConfiguration.getTemplate("mapper-xml.ftl");
-            GenerateUtil.writeFile(resourcePath + "/" + data.get("mapperXmlPath")+  "/" + data.get("entityClassName") + "Mapper.xml", temp, data);
+            GenerateUtil.writeFile(resourcePath + "/" + data.get("mapperXmlPath") + "/" + data.get("entityClassName") + "Mapper.xml", temp, data);
+        } catch (IOException e) {
+            log.warn("entity generate error", e);
+        }
+    }
+
+    public void service(String outPath, Map<String, Object> data) {
+        Template temp = null;
+        try {
+            temp = freeMarkerConfiguration.getTemplate("service.ftl");
+            String servicePath = outPath + "/" + ((String) data.get("servicePackage")).replaceAll("\\.", "/");
+            GenerateUtil.writeFile(servicePath + "/" + data.get("entityClassName") + "Service.java", temp, data);
+            // 生成 impl
+            temp = freeMarkerConfiguration.getTemplate("service-impl.ftl");
+            GenerateUtil.writeFile(servicePath + "/impl/" + data.get("entityClassName") + "ServiceImpl.java", temp, data);
         } catch (IOException e) {
             log.warn("entity generate error", e);
         }
