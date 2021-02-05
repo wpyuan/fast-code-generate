@@ -9,5 +9,5 @@ import ${entityPackage}.${entityClassName};
  * @author ${author}
  * @date ${date}
  */
-public interface ${entityClassName}Service extends DefaultService<${entityClassName}, ${entityClassName}> {
+public interface ${entityClassName}Service extends DefaultService<${entityClassName}> {
 }

@@ -4,14 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DBContextHolder {
-    private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+//    private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+
+    private static String contextHolder;
 
     public static void set(String dbType) {
-        contextHolder.set(dbType);
+        contextHolder = dbType;
     }
 
     public static String get() {
-        return contextHolder.get();
+        return contextHolder;
     }
 
     public static void mysql() {

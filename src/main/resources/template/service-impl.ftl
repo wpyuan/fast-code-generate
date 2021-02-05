@@ -12,5 +12,5 @@ import org.springframework.stereotype.Service;
  * @date ${date}
  */
 @Service
-public class ${entityClassName}ServiceImpl extends DefaultServiceImpl<${entityClassName}, ${entityClassName}> implements ${entityClassName}Service {
+public class ${entityClassName}ServiceImpl extends DefaultServiceImpl<${entityClassName}> implements ${entityClassName}Service {
 }
