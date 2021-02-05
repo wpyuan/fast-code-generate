@@ -81,6 +81,7 @@ public class GenerateService {
         data.put("date", DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
         data.put("tableName", tableName);
         data.put("entityClassName", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableName.toLowerCase()));
+        data.put("requestMappingUrl", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, tableName.toLowerCase()));
         data.put("fields", fields);
         data.put("resultMap", resultMap);
 
@@ -95,6 +96,7 @@ public class GenerateService {
             // 生成 service
             this.service(generateInfo.getOutPath(), data);
             // 生成 controller
+            this.controller(generateInfo.getOutPath(), data);
         }
     }
 
@@ -131,6 +133,16 @@ public class GenerateService {
             // 生成 impl
             temp = freeMarkerConfiguration.getTemplate("service-impl.ftl");
             GenerateUtil.writeFile(servicePath + "/impl/" + data.get("entityClassName") + "ServiceImpl.java", temp, data);
+        } catch (IOException e) {
+            log.warn("entity generate error", e);
+        }
+    }
+
+    public void controller(String outPath, Map<String, Object> data) {
+        Template temp = null;
+        try {
+            temp = freeMarkerConfiguration.getTemplate("controller.ftl");
+            GenerateUtil.writeFile(outPath + "/" + ((String) data.get("controllerPackage")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + "Controller.java", temp, data);
         } catch (IOException e) {
             log.warn("entity generate error", e);
         }
