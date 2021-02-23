@@ -23,6 +23,6 @@ import java.util.List;
 public class ${entityClassName}Controller extends DefaultController<${entityClassName}>{
 
     @Autowired
-    private ${entityClassName}Service employeeService;
+    private ${entityClassName}Service service;
 
 }
