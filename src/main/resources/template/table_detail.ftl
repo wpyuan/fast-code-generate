@@ -153,7 +153,7 @@
 <script src="/js/lib/zepto.min.js"></script>
 <script src="/js/index.js"></script>
 <script>
-    <#if isGenerateOther>
+    <#if isGenerateOther?? && isGenerateOther>
         $("#isGenerateOther").prop("checked", true);
         isGenerateOther();
     </#if>
