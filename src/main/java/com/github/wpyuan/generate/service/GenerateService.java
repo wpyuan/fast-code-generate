@@ -58,6 +58,7 @@ public class GenerateService {
             field.put("isId", tableInfo.getIsPk());
             field.put("type", tableInfo.getJavaType());
             field.put("name", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableInfo.getColumnName().toLowerCase()));
+            field.put("nameUpperUnderscore", tableInfo.getColumnName().toUpperCase());
             fields.add(field);
             
             //mapper.xml
@@ -73,6 +74,7 @@ public class GenerateService {
         // 填充数据
         Map<String, Object> data = new HashMap<>(8);
         data.put("entityPackage", StringUtils.isNotBlank(generateInfo.getEntityPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getEntityPackage() : generateInfo.getPackageName());
+        data.put("constantPackage", generateInfo.getPackageName() + ".constant");
         data.put("mapperPackage", StringUtils.isNotBlank(generateInfo.getMapperPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getMapperPackage() : generateInfo.getPackageName());
         data.put("mapperXmlPath", generateInfo.getMapperXmlPath());
         data.put("fieldTypeImports", fieldTypeImports);
@@ -105,6 +107,9 @@ public class GenerateService {
         try {
             temp = freeMarkerConfiguration.getTemplate("entity.ftl");
             GenerateUtil.writeFile(outPath + "/" + ((String) data.get("entityPackage")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + ".java", temp, data);
+            // 生成 constant
+            temp = freeMarkerConfiguration.getTemplate("entity-field.ftl");
+            GenerateUtil.writeFile(outPath + "/" + ((String) data.get("constantPackage")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + "Field.java", temp, data);
         } catch (IOException e) {
             log.warn("entity generate error", e);
         }
