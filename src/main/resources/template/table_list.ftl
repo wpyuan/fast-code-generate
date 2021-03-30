@@ -40,7 +40,7 @@
                         <div>
                             <div class="icon-article icon"></div>
                             <div class="tit">${table.name}</div>
-                            <div class="sub-tit">${table.desc}</div>
+                            <div class="sub-tit">${table.desc!}</div>
                         </div>
                     </td>
                     <#if table_index % 3 == 2 || !table_has_next>
