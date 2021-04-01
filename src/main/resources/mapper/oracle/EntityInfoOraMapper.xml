@@ -9,7 +9,7 @@
             a.COLUMN_NAME "columnName",
             a.DATA_TYPE "columnType",
             case
-                when a.DATA_TYPE = 'NUMBER' and (a.DATA_SCALE is null or a.DATA_SCALE = 0) is null then 'Long'
+                when a.DATA_TYPE = 'NUMBER' and (a.DATA_SCALE is null or a.DATA_SCALE = 0) then 'Long'
                 when a.DATA_TYPE = 'VARCHAR2' or a.DATA_TYPE = 'CLOB' then 'String'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_SCALE > 0 then 'BigDecimal'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION = 1 and a.DATA_SCALE = 0 then 'Boolean'
