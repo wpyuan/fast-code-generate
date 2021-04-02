@@ -13,7 +13,7 @@
                 when a.DATA_TYPE = 'VARCHAR2' or a.DATA_TYPE = 'CLOB' then 'String'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_SCALE > 0 then 'BigDecimal'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION = 1 and a.DATA_SCALE = 0 then 'Boolean'
-                when a.DATA_TYPE = 'date' or a.DATA_TYPE = 'TIMESTAMP' then 'Date'
+                when a.DATA_TYPE = 'DATE' or a.DATA_TYPE = 'TIMESTAMP' then 'Date'
                 else 'String' end "javaType",
             case
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION is not null and a.DATA_SCALE is not null then a.DATA_PRECISION
