@@ -40,4 +40,21 @@ public class TableListService {
 
         return new ArrayList<>(allTable);
     }
+
+    public List<Map<String, String>> getTable(String schemaName, String tableName) {
+        entityInfoMapper = mapperHepler.getEntityInfoMapper();
+        Cache.TABLE_INFO = entityInfoMapper.selectTableInfoByTableName(schemaName, tableName);
+        Set<Map<String, String>> allTable = new HashSet<>();
+        Map<String, String> table = null;
+        for (TableInfo tableInfo : Cache.TABLE_INFO) {
+            table = new HashMap<>(2);
+            String name = tableInfo.getTableName();
+            String desc = tableInfo.getTableDesc();
+            table.put("name", name);
+            table.put("desc", desc);
+            allTable.add(table);
+        }
+
+        return new ArrayList<>(allTable);
+    }
 }

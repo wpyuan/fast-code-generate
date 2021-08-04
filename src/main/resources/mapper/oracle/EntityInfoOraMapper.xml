@@ -10,6 +10,7 @@
             a.DATA_TYPE "columnType",
             case
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION > 1 and (a.DATA_SCALE is null or a.DATA_SCALE = 0) then 'Long'
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION is null then 'Long'
                 when a.DATA_TYPE = 'VARCHAR2' or a.DATA_TYPE = 'CLOB' then 'String'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_SCALE > 0 then 'BigDecimal'
                 when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION = 1 and a.DATA_SCALE = 0 then 'Boolean'
@@ -33,6 +34,39 @@
                 (select table_name from user_tables where TABLESPACE_NAME is not null and user = #{schemaName})
         order by a.TABLE_NAME, a.COLUMN_ID
     </select>
+
+    <select id="selectTableInfoByTableName" resultType="com.github.wpyuan.generate.dto.TableInfo">
+        SELECT
+            a.TABLE_NAME "tableName",
+            b.COMMENTS "tableDesc",
+            a.COLUMN_NAME "columnName",
+            a.DATA_TYPE "columnType",
+            case
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION > 1 and (a.DATA_SCALE is null or a.DATA_SCALE = 0) then 'Long'
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION is null then 'Long'
+                when a.DATA_TYPE = 'VARCHAR2' or a.DATA_TYPE = 'CLOB' then 'String'
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_SCALE > 0 then 'BigDecimal'
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION = 1 and a.DATA_SCALE = 0 then 'Boolean'
+                when a.DATA_TYPE = 'DATE' or a.DATA_TYPE = 'TIMESTAMP' then 'Date'
+                else 'String' end "javaType",
+            case
+                when a.DATA_TYPE = 'NUMBER' and a.DATA_PRECISION is not null and a.DATA_SCALE is not null then a.DATA_PRECISION
+                else a.DATA_LENGTH end "length",
+            decode(a.NULLABLE, 'Y', 1, 0) "isNull",
+            a.DATA_DEFAULT "defaultValue",
+            c.COMMENTS "columnDesc",
+            case d.COLUMN_NAME
+                when a.COLUMN_NAME then 1
+                else 0 end "isPk"
+        FROM all_tab_cols a
+                 left join (select TABLE_NAME, COMMENTS from user_tab_comments) b on b.TABLE_NAME = a.TABLE_NAME
+                 left join (select TABLE_NAME, COLUMN_NAME, COMMENTS from USER_COL_COMMENTS) c on c.TABLE_NAME = a.TABLE_NAME and c.COLUMN_NAME = a.COLUMN_NAME
+                 left join (select ucc.TABLE_NAME, ucc.COLUMN_NAME from user_cons_columns ucc, user_constraints uc where uc.CONSTRAINT_TYPE = 'P' and uc.CONSTRAINT_NAME = ucc.CONSTRAINT_NAME) d on d.TABLE_NAME = a.TABLE_NAME
+        WHERE
+                a.table_name = #{tableName}
+        order by a.TABLE_NAME, a.COLUMN_ID
+    </select>
+
     <select id="selectCurrentSchemaName" resultType="java.lang.String">
         select user from dual
     </select>

@@ -1,6 +1,6 @@
 package ${servicePackage};
 
-import com.github.defaultcore.service.DefaultService;
+import com.github.dc.common.base.service.DefaultService;
 import ${entityPackage}.${entityClassName};
 
 /**

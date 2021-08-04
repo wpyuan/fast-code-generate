@@ -31,6 +31,16 @@ public class TableListController {
         return "table_list";
     }
 
+    @RequestMapping("/table-list/{dataSourceName}/one")
+    public String tableList(@PathVariable String dataSourceName, String tableName, Model model) {
+        DBContextHolder.set(dataSourceName);
+        String schemaName = tableListService.getCurrentSchemaName();
+        List<Map<String, String>> allTable = tableListService.getTable(schemaName, tableName);
+        model.addAttribute("schemaName", schemaName);
+        model.addAttribute("allTable", allTable);
+        return "table_list";
+    }
+
     @RequestMapping("/refresh")
     public ResponseEntity<String> refresh() {
         String schemaName = tableListService.getCurrentSchemaName();
