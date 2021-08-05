@@ -123,7 +123,7 @@ public class GenerateService {
             // 生成 mapper.xml
             String resourcePath = outPath.replaceFirst("java", "resources");
             temp = freeMarkerConfiguration.getTemplate("mapper-xml.ftl");
-            GenerateUtil.writeFile(resourcePath + "/" + data.get("mapperXmlPath") + "/" + data.get("entityClassName") + "Mapper.xml", temp, data);
+            GenerateUtil.writeFile(resourcePath + "/" + ((String) data.get("mapperXmlPath")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + "Mapper.xml", temp, data);
         } catch (IOException e) {
             log.warn("entity generate error", e);
         }
