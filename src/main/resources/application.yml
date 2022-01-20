@@ -25,7 +25,7 @@ spring:
     oracle:
       jdbc-url: jdbc:oracle:thin:@${ORACLE_IP:localhost}:${ORACLE_PORT:1521}/${ORACLE_SID:helowin}
       username: ${ORACLE_USERNAME:test}
-      password: ${ORACLE_PASSWORD:test}
+      password: ${ORACLE_PASSWORD:12345}
       driver-class-name: oracle.jdbc.OracleDriver
       connectionTestQuery: SELECT 1 from dual
 

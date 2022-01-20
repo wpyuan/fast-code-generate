@@ -83,11 +83,16 @@
                                 <input id="isGenerateOther" name="isGenerateOther" type="checkbox" onchange="isGenerateOther()"/>
                             </label>
                         </div>
+                        <div class="ui-form-item ui-form-item-switch ui-border-b">
+                            <p>生成页面代码</p>
+                            <label class="ui-switch">
+                                <input id="isGenerateHtml" name="isGenerateHtml" type="checkbox" onchange="isGenerateHtml()"/>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </div>
             <div id="other" class="demo-item" hidden>
-                <p class="demo-desc">service/controller相关</p>
                 <div class="demo-block">
                     <div class="ui-form ui-border-t">
                         <div class="ui-form-item ui-border-b">
@@ -107,7 +112,19 @@
                     </div>
                 </div>
             </div>
-
+            <div id="html" class="demo-item" hidden>
+                <div class="demo-block">
+                    <div class="ui-form ui-border-t">
+                        <div class="ui-form-item ui-border-b">
+                            <label>
+                                html所在路径
+                            </label>
+                            <input id="htmlResourcesPath" name="htmlResourcesPath" type="text" value="${htmlResourcesPath!''}" placeholder="如static" required />
+                            <a href="#" class="ui-icon-close" onclick="$('#htmlResourcesPath').val('')"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="demo-item">
                 <div class="demo-block">
                     <div class="ui-form ui-border-t">
@@ -227,7 +244,7 @@
         var outPath = $("#outPath").val().replaceAll("\\","/");
         return "outPath=" + outPath + "&packageName=" + $("#packageName").val() + "&author=" + $("#author").val() +
             "&entityPackage=" + $("#entityPackage").val() + "&mapperPackage=" + $("#mapperPackage").val() + "&mapperXmlPath=" + $("#mapperXmlPath").val() +
-            "&isGenerateOther=" + $("#isGenerateOther").is(":checked") + "&servicePackage=" + $("#servicePackage").val() + "&controllerPackage=" + $("#controllerPackage").val();
+            "&isGenerateOther=" + $("#isGenerateOther").is(":checked") + "&servicePackage=" + $("#servicePackage").val() + "&controllerPackage=" + $("#controllerPackage").val() + "&isGenerateHtml=" + $("#isGenerateHtml").is(":checked") + '&htmlResourcesPath=' + $("#htmlResourcesPath").val();
     }
 
     function handleSuccess(res) {
@@ -262,6 +279,15 @@
             $("#other").show();
         } else {
             $("#other").hide();
+        }
+    }
+
+    function isGenerateHtml() {
+        var htmlShow = $("#isGenerateHtml").is(":checked");
+        if (htmlShow) {
+            $("#html").show();
+        } else {
+            $("#html").hide();
         }
     }
 

@@ -50,4 +50,12 @@ public class GenerateInfo {
      * controller所在次级路径
      */
     private String controllerPackage;
+    /**
+     * 是否生成页面代码
+     */
+    private Boolean isGenerateHtml;
+    /**
+     * 页面所在路径，resources/后面部分
+     */
+    private String htmlResourcesPath;
 }

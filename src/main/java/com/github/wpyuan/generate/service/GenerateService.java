@@ -41,6 +41,7 @@ public class GenerateService {
         Map<String, Object> field = null;
         List<Map<String, Object>> resultMap = new ArrayList<>();
         Map<String, Object> result = null;
+        String pkName = null;
         for (TableInfo tableInfo : Cache.TABLE_INFO) {
             if (!tableName.equals(tableInfo.getTableName())) {
                 continue;
@@ -52,6 +53,7 @@ public class GenerateService {
                 if (sequenceMapper.isSequenceExist(sequenceName)) {
                     field.put("sequenceName", sequenceName);
                 }
+                pkName = tableInfo.getColumnName();
             }
             fieldTypeImports.add(tableInfo.getJavaType());
             field.put("desc", tableInfo.getColumnDesc());
@@ -86,6 +88,7 @@ public class GenerateService {
         data.put("requestMappingUrl", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, tableName.toLowerCase()));
         data.put("fields", fields);
         data.put("resultMap", resultMap);
+        data.put("pkName", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, pkName.toLowerCase()));
 
         // 生成entity
         this.entity(generateInfo.getOutPath(), data);
@@ -99,6 +102,12 @@ public class GenerateService {
             this.service(generateInfo.getOutPath(), data);
             // 生成 controller
             this.controller(generateInfo.getOutPath(), data);
+        }
+
+        if (generateInfo.getIsGenerateHtml()) {
+            data.put("htmlResourcesPath", generateInfo.getHtmlResourcesPath());
+            // 生成 form_element_html.ftl
+            this.html(generateInfo.getOutPath(), data);
         }
     }
 
@@ -162,5 +171,17 @@ public class GenerateService {
         }
 
         return jdbcTypeConvert.convert(columnType);
+    }
+
+    public void html(String outPath, Map<String, Object> data) {
+        Template temp = null;
+        try {
+            temp = freeMarkerConfiguration.getTemplate("form_element_html.ftl");
+            String resourcePath = outPath.replaceFirst("java", "resources");
+            GenerateUtil.writeFile(resourcePath + "/" + ((String) data.get("htmlResourcesPath")).replaceAll("\\.", "/") + "/"  + data.get("tableName").toString().toLowerCase() + ".html", temp, data);
+
+        } catch (IOException e) {
+            log.warn("html generate error", e);
+        }
     }
 }

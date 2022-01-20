@@ -4,7 +4,6 @@ import ${entityPackage}.${entityClassName};
 import ${servicePackage}.${entityClassName}Service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.github.dc.common.base.controller.DefaultController;
@@ -24,5 +23,4 @@ public class ${entityClassName}Controller extends DefaultController<${entityClas
 
     @Autowired
     private ${entityClassName}Service service;
-
 }
