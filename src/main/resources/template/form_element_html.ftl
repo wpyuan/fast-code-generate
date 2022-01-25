@@ -31,6 +31,12 @@
                 <el-form-item label="${item.desc!}" prop="${item.name}">
                     <el-switch v-model="form.${item.name}"></el-switch>
                 </el-form-item>
+                <#elseIf item.isEnum?? && item.isEnum == true>
+                <el-form-item label="${item.desc!}" prop="${item.name}">
+                    <el-select v-model="form.${item.name}" placeholder="请选择" style="width: 100%;">
+                        <el-option v-for="item in options.${item.name}" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select>
+                </el-form-item>
                 <#else>
                 <el-form-item label="${item.desc!}" prop="${item.name}">
                     <el-input-number v-model="form.${item.name}" :min="0" :precision="4" :controls="false" style="width: 100%;"></el-input-number>
@@ -62,6 +68,20 @@
                     ${item.name}: getQs('${item.name}'),
                     <#else>
                     ${item.name}: undefined,
+                    </#if>
+                    </#list>
+                },
+                options: {
+                    <#list fields as item>
+                    <#if item.isEnum?? && item.isEnum == true>
+                    ${item.name}: [
+                        <#list item.enumData as option>
+                        {
+                            value: '${option.value}',
+                            label: '${option.desc}'
+                        },
+                        </#list>
+                    ],
                     </#if>
                     </#list>
                 },

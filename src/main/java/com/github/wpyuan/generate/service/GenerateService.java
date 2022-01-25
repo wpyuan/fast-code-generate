@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -42,6 +43,7 @@ public class GenerateService {
         List<Map<String, Object>> resultMap = new ArrayList<>();
         Map<String, Object> result = null;
         String pkName = null;
+        List<Map<String, Object>> enums = new ArrayList<>();
         for (TableInfo tableInfo : Cache.TABLE_INFO) {
             if (!tableName.equals(tableInfo.getTableName())) {
                 continue;
@@ -58,7 +60,32 @@ public class GenerateService {
             fieldTypeImports.add(tableInfo.getJavaType());
             field.put("desc", tableInfo.getColumnDesc());
             field.put("isId", tableInfo.getIsPk());
-            field.put("type", tableInfo.getJavaType());
+            field.put("nameUpperCamel", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, tableInfo.getColumnName().toLowerCase()));
+            if (tableInfo.getColumnDesc() != null && tableInfo.getColumnDesc().contains("[枚举]")) {
+                // add:添加,edit:编辑,query:查询,remove:删除
+                String enumString = tableInfo.getColumnDesc().substring(tableInfo.getColumnDesc().indexOf("[枚举]")+4).trim();
+                Map<String, Object> valueAndDescMap = null;
+                List<Map<String, Object>> data = new ArrayList<>();
+                boolean isNumber = false;
+                for (String valueAndDesc : enumString.split(",")) {
+                    valueAndDescMap = new HashMap<>();
+                    isNumber = StringUtils.isNumeric(valueAndDesc.split(":")[0]);
+                    valueAndDescMap.put("value", valueAndDesc.split(":")[0].trim());
+                    valueAndDescMap.put("desc", valueAndDesc.split(":")[1].trim());
+                    data.add(valueAndDescMap);
+                }
+                Map<String, Object> filedEnumData = new HashMap<>();
+                filedEnumData.put("isNumber", isNumber);
+                filedEnumData.put("className", field.get("nameUpperCamel") + "Enum");
+                filedEnumData.put("data", data);
+                filedEnumData.put("classDesc", tableInfo.getColumnDesc());
+                enums.add(filedEnumData);
+                field.put("type", field.get("nameUpperCamel") + "Enum");
+                field.put("isEnum", true);
+                field.put("enumData", data);
+            } else {
+                field.put("type", tableInfo.getJavaType());
+            }
             field.put("name", CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, tableInfo.getColumnName().toLowerCase()));
             field.put("nameUpperUnderscore", tableInfo.getColumnName().toUpperCase());
             fields.add(field);
@@ -77,6 +104,8 @@ public class GenerateService {
         Map<String, Object> data = new HashMap<>(8);
         data.put("entityPackage", StringUtils.isNotBlank(generateInfo.getEntityPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getEntityPackage() : generateInfo.getPackageName());
         data.put("constantPackage", generateInfo.getPackageName() + ".constant");
+        data.put("enumPackage", generateInfo.getPackageName() + ".enums");
+        data.put("enums", enums);
         data.put("mapperPackage", StringUtils.isNotBlank(generateInfo.getMapperPackage()) ? generateInfo.getPackageName() + "." + generateInfo.getMapperPackage() : generateInfo.getPackageName());
         data.put("mapperXmlPath", generateInfo.getMapperXmlPath());
         data.put("fieldTypeImports", fieldTypeImports);
@@ -119,6 +148,19 @@ public class GenerateService {
             // 生成 constant
             temp = freeMarkerConfiguration.getTemplate("entity-field.ftl");
             GenerateUtil.writeFile(outPath + "/" + ((String) data.get("constantPackage")).replaceAll("\\.", "/") + "/" + data.get("entityClassName") + "Field.java", temp, data);
+            // 生成 enum
+            temp = freeMarkerConfiguration.getTemplate("field-enum.ftl");
+            List<Map<String, Object>> list = (List<Map<String, Object>>) data.get("enums");
+            if (CollectionUtils.isEmpty(list)) {
+                return;
+            }
+            for (Map<String, Object> filedEnumData : list) {
+                Template finalTemp = temp;
+                data.put("filedEnumData", filedEnumData);
+                filedEnumData.forEach((key, value)-> {
+                    GenerateUtil.writeFile(outPath + "/" + ((String) data.get("enumPackage")).replaceAll("\\.", "/") + "/" + filedEnumData.get("className") + ".java", finalTemp, data);
+                });
+            }
         } catch (IOException e) {
             log.warn("entity generate error", e);
         }

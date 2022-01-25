@@ -1,5 +1,6 @@
 package ${entityPackage};
 
+import ${enumPackage}.*;
 import com.github.mybatis.crud.annotation.Id;
 import com.github.mybatis.crud.annotation.Table;
 import lombok.AllArgsConstructor;
